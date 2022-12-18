@@ -2,7 +2,6 @@ package com.blogbackend.controllers;
 
 import com.blogbackend.models.Post;
 import com.blogbackend.services.PostService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
