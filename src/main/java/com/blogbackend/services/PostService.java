@@ -38,7 +38,9 @@ public class PostService {
         return save(existingPost);
     }
 
-    public Post getById(Long post_id) {
-        return postRepository.findById(post_id).get();
+    public Post getPostById(Long post_id) {
+        return postRepository.findById(post_id).orElseThrow(
+                () -> new NotFoundException("No post with id " + post_id)
+        );
     }
 }

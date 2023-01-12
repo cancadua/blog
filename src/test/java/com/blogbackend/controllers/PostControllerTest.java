@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,7 +50,7 @@ public class PostControllerTest {
     @Test
     void successfullyGetPostByIdTest() throws Exception {
         Post post = new Post(0L, "test title", "test content");
-        when(postService.getById(0L)).thenReturn(post);
+        when(postService.getPostById(0L)).thenReturn(post);
 
         mockMvc.perform(get("/api/public/posts/0")
                         .contentType("application/json"))
@@ -76,8 +77,8 @@ public class PostControllerTest {
 
     @Test
     void successfullyUpdatePostTest() throws Exception {
-        Post post = new Post("test title", "test content");
-        when(postService.edit(any(Post.class), 0L)).thenReturn(post);
+        Post post = new Post(0L, "test title", "test content");
+        when(postService.edit(any(Post.class), eq(0L))).thenReturn(post);
         String postJson = new ObjectMapper().writeValueAsString(post);
 
         ResultActions result = mockMvc.perform(put("/api/posts/0")

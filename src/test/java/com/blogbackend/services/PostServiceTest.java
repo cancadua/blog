@@ -41,7 +41,7 @@ public class PostServiceTest {
         PostService postService = new PostService(postRepository);
         Long id = postService.save(newPost).getPostId();
 
-        Post existingPostById = postService.getById(id);
+        Post existingPostById = postService.getPostById(id);
         System.out.println(existingPostById);
     }
 
