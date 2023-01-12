@@ -5,11 +5,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -19,8 +19,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +34,7 @@ public class PostControllerTest {
     private PostService postService;
 
     @Test
-    void getAllPostsTest() throws Exception {
+    void successfullyGetAllPostsTest() throws Exception {
         List<Post> posts = new ArrayList<>();
         posts.add(new Post(1L, "test title", "test content"));
         posts.add(new Post(2L, "test title2", "test content2"));
@@ -43,11 +42,24 @@ public class PostControllerTest {
 
         mockMvc.perform(get("/api/public/posts")
                 .contentType("application/json"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @Test
-    void successfullyCreateAPostTest() throws Exception {
+    void successfullyGetPostByIdTest() throws Exception {
+        Post post = new Post(0L, "test title", "test content");
+        when(postService.getById(0L)).thenReturn(post);
+
+        mockMvc.perform(get("/api/public/posts/0")
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("test title"))
+                .andExpect(jsonPath("$.content").value("test content"));
+    }
+
+    @Test
+    void successfullyCreatePostTest() throws Exception {
         Post post = new Post("test title", "test content");
         when(postService.save(any(Post.class))).thenReturn(post);
         String postJson = new ObjectMapper().writeValueAsString(post);
@@ -61,6 +73,33 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.title").value("test title"))
                 .andExpect(jsonPath("$.content").value("test content"));
     }
+
+    @Test
+    void successfullyUpdatePostTest() throws Exception {
+        Post post = new Post("test title", "test content");
+        when(postService.edit(any(Post.class), 0L)).thenReturn(post);
+        String postJson = new ObjectMapper().writeValueAsString(post);
+
+        ResultActions result = mockMvc.perform(put("/api/posts/0")
+                .contentType("application/json")
+                .content(postJson)
+        );
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("test title"))
+                .andExpect(jsonPath("$.content").value("test content"));
+    }
+
+    @Test
+    void successfullyDeletePostTest() throws Exception {
+        Post post = new Post("test title", "test content");
+        when(postService.delete(0L)).thenReturn(true);
+
+        ResultActions result = mockMvc.perform(delete("/api/posts/0"));
+
+        result.andExpect(status().isOk());
+    }
+
 
 
 }

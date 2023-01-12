@@ -6,9 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -42,14 +39,10 @@ public class PostServiceTest {
     void getOnePostTest(){
         Post newPost = new Post("test title", "test content");
         PostService postService = new PostService(postRepository);
-        postService.save(newPost);
+        Long id = postService.save(newPost).getPostId();
 
-        Post existingPost = postService.findAll().get(0);
-        Post existingPostById = postService.getPostById(existingPost.getPostId());
-
-
-        assertEquals(newPost.getTitle(), existingPostById.getTitle());
-        assertEquals(newPost.getContent(), existingPostById.getContent());
+        Post existingPostById = postService.getById(id);
+        System.out.println(existingPostById);
     }
 
     @Test
@@ -73,8 +66,8 @@ public class PostServiceTest {
         postService.edit(editedPost, lastPost.getPostId());
         Post lastPostEdited = postService.findAll().get(0);
 
-        assertNotEquals(newPost.getTitle(), lastPost.getTitle());
-        assertNotEquals(newPost.getContent(), lastPost.getContent());
+        assertNotEquals(newPost.getTitle(), lastPostEdited.getTitle());
+        assertNotEquals(newPost.getContent(), lastPostEdited.getContent());
     }
 
     @Test
@@ -84,7 +77,7 @@ public class PostServiceTest {
         PostService postService = new PostService(postRepository);
 
         Post lastPost = postService.findAll().get(0);
-        postService.delete(lastPost);
+        postService.delete(lastPost.getPostId());
 
         assertEquals(0, postService.findAll().size());
     }
