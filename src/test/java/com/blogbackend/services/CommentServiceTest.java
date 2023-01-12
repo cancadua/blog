@@ -1,7 +1,6 @@
 package com.blogbackend.services;
 
 import com.blogbackend.models.Comment;
-import com.blogbackend.models.Comment;
 import com.blogbackend.repositories.CommentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

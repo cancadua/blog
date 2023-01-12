@@ -2,11 +2,8 @@ package com.blogbackend.services;
 
 import com.blogbackend.error.NotFoundException;
 import com.blogbackend.models.Comment;
-import com.blogbackend.models.Comment;
-import com.blogbackend.repositories.CommentRepository;
 import com.blogbackend.repositories.CommentRepository;
 
-import java.util.Collection;
 import java.util.List;
 
 public class CommentService {
