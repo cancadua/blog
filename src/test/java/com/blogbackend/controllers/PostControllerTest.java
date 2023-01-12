@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,10 +47,11 @@ public class PostControllerTest {
     }
 
     @Test
-    void successfullyCreateAPost() throws Exception {
+    void successfullyCreateAPostTest() throws Exception {
         Post post = new Post("test title", "test content");
-        when(postService.save(post).thenReturn(post));
+        when(postService.save(any(Post.class))).thenReturn(post);
         String postJson = new ObjectMapper().writeValueAsString(post);
+
         ResultActions result = mockMvc.perform(post("/api/posts/new")
                 .contentType("application/json")
                 .content(postJson)
@@ -59,5 +61,6 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.title").value("test title"))
                 .andExpect(jsonPath("$.content").value("test content"));
     }
+
 
 }

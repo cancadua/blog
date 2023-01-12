@@ -17,4 +17,18 @@ public class PostService {
     public List<Post> findAll() {
         return postRepository.findAll();
     }
+
+    public Post save(Post post) {
+        return postRepository.save(post);
+    }
+
+    public void delete(Post lastPost) {
+    }
+
+    public void edit(Post editedPost, Long i) {
+    }
+
+    public Post getPostById(Long postId) {
+        return new Post();
+    }
 }
