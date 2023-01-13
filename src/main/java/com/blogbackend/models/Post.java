@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Post {
     @Id
+    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long postId;
 

@@ -93,7 +93,6 @@ public class PostControllerTest {
 
     @Test
     void successfullyDeletePostTest() throws Exception {
-        Post post = new Post("test title", "test content");
         when(postService.delete(0L)).thenReturn(true);
 
         ResultActions result = mockMvc.perform(delete("/api/posts/0"));

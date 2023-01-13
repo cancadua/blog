@@ -37,4 +37,9 @@ public class Comment {
     public Comment(String content) {
         this.content = content;
     }
+
+    public Comment(Long comment_id, String content) {
+        this.commentId = comment_id;
+        this.content = content;
+    }
 }
