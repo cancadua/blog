@@ -24,8 +24,7 @@ public class PostService {
     }
 
     public boolean delete(Long post_id) {
-        postRepository.deletePostByPostId(post_id);
-        return true;
+        return postRepository.deletePostByPostId(post_id);
     }
 
     public Post edit(Post post, Long post_id) {

@@ -33,7 +33,6 @@ public class CommentService {
     }
 
     public boolean delete(Long comment_id) {
-        commentRepository.deleteCommentByCommentId(comment_id);
-        return true;
+        return commentRepository.deleteCommentByCommentId(comment_id);
     }
 }

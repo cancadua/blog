@@ -9,5 +9,5 @@ import javax.transaction.Transactional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Transactional
-    void deleteCommentByCommentId(Long post_id);
+    boolean deleteCommentByCommentId(Long post_id);
 }

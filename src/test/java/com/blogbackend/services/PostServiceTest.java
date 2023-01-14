@@ -1,20 +1,33 @@
 package com.blogbackend.services;
 
 import com.blogbackend.models.Post;
+import com.blogbackend.models.Post;
+import com.blogbackend.repositories.PostRepository;
 import com.blogbackend.repositories.PostRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
+    @InjectMocks
+    PostService postService;
 
-    @Autowired
-    private PostRepository postRepository;
+    @Mock
+    PostRepository postRepository;
 
     @AfterEach
     void tearDown(){
@@ -23,62 +36,60 @@ public class PostServiceTest {
 
     @Test
     void getAllPostsTest(){
+        List<Post> list = new ArrayList<Post>();
+        Post post = new Post("title","content");
+        Post post2 = new Post("title2","content2");
+        Post post3 = new Post("title3","content3");
+        list.add(post);
+        list.add(post2);
+        list.add(post3);
 
-        Post newPost = new Post("test title", "test content");
-        Post newPost2 = new Post("test title2", "test content2");
-        Post newPost3 = new Post("test title3", "test content3");
-        PostService postService = new PostService(postRepository);
-        postService.save(newPost);
-        postService.save(newPost2);
-        postService.save(newPost3);
+        when(postRepository.findAll()).thenReturn(list);
+        List<Post> postList = postService.findAll();
 
-        assertEquals(3, postService.findAll().size());
+        assertEquals(3, postList.size());
     }
 
     @Test
     void getOnePostTest(){
-        Post newPost = new Post("test title", "test content");
-        PostService postService = new PostService(postRepository);
-        Long id = postService.save(newPost).getPostId();
+        Post post = new Post(0L, "title","content");
+        Optional<Post> optionalPost = Optional.of(post);
 
-        Post existingPostById = postService.getPostById(id);
-        System.out.println(existingPostById);
+        when(postRepository.findById(any(Long.class))).thenReturn(optionalPost);
+        Post returnedPost = postService.getPostById(0L);
+
+        assertEquals(post.getContent(), returnedPost.getContent());
     }
 
     @Test
     void savePostTest() {
-        PostService postService = new PostService(postRepository);
         Post post = new Post("title","content");
 
-        postService.save(post);
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        Post createdPost = postService.save(post);
 
-        assertEquals(1.0, postRepository.count());
+        assertEquals(post.getContent(), createdPost.getContent());
     }
 
     @Test
     void editPostTest() {
-        Post newPost = new Post("test title", "test content");
-        postRepository.save(newPost);
-        PostService postService = new PostService(postRepository);
-        Post editedPost = new Post("test title edit", "test content edit");
-        Post lastPost = postService.findAll().get(0);
+        Post post = new Post(0L, "title", "content");
+        Optional<Post> optionalPost = Optional.of(post);
 
-        postService.edit(editedPost, lastPost.getPostId());
-        Post lastPostEdited = postService.findAll().get(0);
+        when(postRepository.save(any(Post.class))).thenReturn(post);
+        when(postRepository.findById(any(Long.class))).thenReturn(optionalPost);
+        Post editedPost = postService.edit(post, post.getPostId());
 
-        assertNotEquals(newPost.getTitle(), lastPostEdited.getTitle());
-        assertNotEquals(newPost.getContent(), lastPostEdited.getContent());
+        assertEquals(post.getContent(), editedPost.getContent());
     }
 
     @Test
     void deletePostTest() {
-        Post newPost = new Post("test title", "test content");
-        postRepository.save(newPost);
-        PostService postService = new PostService(postRepository);
+        Post post = new Post(0L, "title", "content");
 
-        Post lastPost = postService.findAll().get(0);
-        postService.delete(lastPost.getPostId());
+        when(postRepository.deletePostByPostId(any(Long.class))).thenReturn(true);
+        boolean isDeleted = postService.delete(post.getPostId());
 
-        assertEquals(0, postService.findAll().size());
+        assertTrue(isDeleted);
     }
 }

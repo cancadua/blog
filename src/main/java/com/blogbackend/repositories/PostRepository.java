@@ -9,5 +9,5 @@ import javax.transaction.Transactional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Transactional
-    void deletePostByPostId(Long post_id);
+    boolean deletePostByPostId(Long post_id);
 }
