@@ -1,6 +1,7 @@
 package com.blogbackend.models;
 
 import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -28,13 +29,13 @@ public class Post {
 
     private LocalDateTime updatedAt;
 
-    public Post (Long postId, String title, String content) {
+    public Post(Long postId, String title, String content) {
         this.postId = postId;
         this.title = title;
         this.content = content;
     }
 
-    public Post (String title, String content) {
+    public Post(String title, String content) {
         this.title = title;
         this.content = content;
     }

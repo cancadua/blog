@@ -17,7 +17,7 @@ public class CommentController {
 
     @GetMapping("/public/posts/{post_id}/comments")
     public ResponseEntity<?> getPostComments(@PathVariable Long post_id) {
-        return new ResponseEntity<>(commentService.findAll(post_id), HttpStatus.OK);
+        return new ResponseEntity<>(commentService.getPostComments(post_id), HttpStatus.OK);
     }
 
     @PostMapping("/posts/{post_id}/comments")
@@ -26,12 +26,12 @@ public class CommentController {
     }
 
     @PutMapping("/posts/{post_id}/comments/{comment_id}")
-    public ResponseEntity<?> updateComment(@PathVariable Long post_id, @PathVariable Long comment_id, @RequestBody Comment comment) {
+    public ResponseEntity<?> updateComment(@PathVariable Long comment_id, @RequestBody Comment comment) {
         return new ResponseEntity<>(commentService.edit(comment, comment_id), HttpStatus.OK);
     }
 
     @DeleteMapping("/posts/{post_id}/comments/{comment_id}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
+    public ResponseEntity<?> deleteComment(@PathVariable Long comment_id) {
         return new ResponseEntity<>(commentService.delete(comment_id), HttpStatus.OK);
     }
 }

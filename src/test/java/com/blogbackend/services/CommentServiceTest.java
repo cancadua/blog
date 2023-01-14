@@ -30,6 +30,9 @@ public class CommentServiceTest {
     CommentService commentService;
 
     @Mock
+    PostService postService;
+
+    @Mock
     CommentRepository commentRepository;
 
     @AfterEach
@@ -40,6 +43,7 @@ public class CommentServiceTest {
     @Test
     void getPostCommentsTest() {
         Post post = new Post(0L, "title", "content");
+        Optional<Post> optionalPost = Optional.of(post);
         List<Comment> list = new ArrayList<>();
         Comment comment = new Comment("test content");
         Comment comment2 = new Comment("test content2");
@@ -48,8 +52,9 @@ public class CommentServiceTest {
         list.add(comment2);
         list.add(comment3);
 
-        when(commentRepository.findCommentsByPostOrderByCreatedAtAsc(any(Long.class))).thenReturn(list);
-        List<Comment> commentList = commentService.findAll(post.getPostId());
+        when(commentRepository.findCommentsByPostOrderByCreatedAtAsc(any(Post.class))).thenReturn(list);
+        when(postService.getById(any(Long.class))).thenReturn(optionalPost);
+        List<Comment> commentList = commentService.getPostComments(post.getPostId());
 
         assertEquals(3, commentList.size());
     }
@@ -57,9 +62,11 @@ public class CommentServiceTest {
     @Test
     void saveCommentTest() {
         Post post = new Post(0L, "title", "content");
+        Optional<Post> optionalPost = Optional.of(post);
         Comment comment = new Comment("content");
 
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+        when(postService.getById(any(Long.class))).thenReturn(optionalPost);
         Comment createdComment = commentService.save(comment, post.getPostId());
 
         assertNotNull(createdComment.getPost());

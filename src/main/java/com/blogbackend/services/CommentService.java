@@ -2,25 +2,39 @@ package com.blogbackend.services;
 
 import com.blogbackend.error.NotFoundException;
 import com.blogbackend.models.Comment;
+import com.blogbackend.models.Post;
 import com.blogbackend.repositories.CommentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class CommentService {
+    @Autowired
     private CommentRepository commentRepository;
 
-    public CommentService(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
+    @Autowired
+    private PostService postService;
 
     public Comment save(Comment comment, Long post_id) {
+        if (comment.getCommentId() == null) {
+            Post existingPost = postService.getById(post_id).orElseThrow(
+                    () -> new NotFoundException("No post with id " + post_id)
+            );
+            comment.setPost(existingPost);
+            comment.setCreatedAt(LocalDateTime.now());
+        }
+        comment.setUpdatedAt(LocalDateTime.now());
         return commentRepository.save(comment);
     }
 
-    public List<Comment> findAll(Long post_id) {
-        return commentRepository.findAll();
+    public List<Comment> getPostComments(Long post_id) {
+        Post existingPost = postService.getById(post_id).orElseThrow(
+                () -> new NotFoundException("No post with id " + post_id)
+        );
+        return commentRepository.findCommentsByPostOrderByCreatedAtAsc(existingPost);
     }
 
     public Comment edit(Comment comment, Long comment_id) {

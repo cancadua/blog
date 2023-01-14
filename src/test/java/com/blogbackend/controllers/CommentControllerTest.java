@@ -43,7 +43,7 @@ public class CommentControllerTest {
         comments.add(new Comment("test content"));
         comments.add(new Comment("test content2"));
 
-        when(commentService.findAll(any(Long.class))).thenReturn(comments);
+        when(commentService.getPostComments(any(Long.class))).thenReturn(comments);
 
         mockMvc.perform(get("/api/public/posts/" + post.getPostId() + "/comments")
                 .contentType("application/json"))
@@ -72,26 +72,29 @@ public class CommentControllerTest {
 
     @Test
     void successfullyUpdateCommentTest() throws Exception {
-        Comment comment = new Comment("test content");
+        Post post = new Post(0L, "title", "content");
+        Comment comment = new Comment(0L, "test content");
+
         when(commentService.edit(any(Comment.class), any(Long.class))).thenReturn(comment);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String commentJson = objectMapper.writeValueAsString(comment);
 
-        ResultActions result = mockMvc.perform(put("/api/posts/comments/4")
+        ResultActions result = mockMvc.perform(put("/api/posts/" + post.getPostId() + "/comments/" + comment.getCommentId())
                 .contentType("application/json")
                 .content(commentJson)
         );
-
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("test content"));
     }
 
     @Test
     void successfullyDeleteCommentTest() throws Exception {
-        when(commentService.delete(any(Long.class))).thenReturn(true);
+        Post post = new Post(0L, "title", "content");
+        Comment comment = new Comment(0L,"test content");
 
-        ResultActions result = mockMvc.perform(delete("/api/posts/comments/0"));
+        when(commentService.delete(any(Long.class))).thenReturn(true);
+        ResultActions result = mockMvc.perform(delete("/api/posts/" + post.getPostId() + "/comments/" + comment.getCommentId()));
 
         result.andExpect(status().isOk());
     }
