@@ -1,5 +1,6 @@
 package com.blogbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -33,6 +34,12 @@ public class Comment {
     @LastModifiedDate
     @Column(name = "last_modified_date")
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
+    @NotNull
+    private Post post;
 
     public Comment(String content) {
         this.content = content;

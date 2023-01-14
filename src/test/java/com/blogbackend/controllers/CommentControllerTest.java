@@ -1,6 +1,7 @@
 package com.blogbackend.controllers;
 
 import com.blogbackend.models.Comment;
+import com.blogbackend.models.Post;
 import com.blogbackend.services.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,13 +37,15 @@ public class CommentControllerTest {
     private CommentService commentService;
 
     @Test
-    void successfullyGetAllCommentsTest() throws Exception {
+    void successfullyGetPostCommentsTest() throws Exception {
+        Post post = new Post(0L, "title", "content");
         List<Comment> comments = new ArrayList<>();
         comments.add(new Comment("test content"));
         comments.add(new Comment("test content2"));
-        when(commentService.findAll()).thenReturn(comments);
 
-        mockMvc.perform(get("/api/public/posts/comments")
+        when(commentService.findAll(any(Long.class))).thenReturn(comments);
+
+        mockMvc.perform(get("/api/public/posts/" + post.getPostId() + "/comments")
                 .contentType("application/json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
@@ -51,12 +54,14 @@ public class CommentControllerTest {
     @Test
     void successfullyCreateCommentTest() throws Exception {
         Comment comment = new Comment( "test content");
-        when(commentService.save(any(Comment.class))).thenReturn(comment);
+        Post post = new Post(0L, "title", "content");
+
+        when(commentService.save(any(Comment.class), any(Long.class))).thenReturn(comment);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String commentJson = objectMapper.writeValueAsString(comment);
 
-        ResultActions result = mockMvc.perform(post("/api/posts/comments")
+        ResultActions result = mockMvc.perform(post("/api/posts/" + post.getPostId() + "/comments")
                 .contentType("application/json")
                 .content(commentJson)
         );

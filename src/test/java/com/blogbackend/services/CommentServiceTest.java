@@ -1,6 +1,7 @@
 package com.blogbackend.services;
 
 import com.blogbackend.models.Comment;
+import com.blogbackend.models.Post;
 import com.blogbackend.repositories.CommentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,34 +38,39 @@ public class CommentServiceTest {
     }
 
     @Test
-    void getCommentsTest(){
-        List<Comment> list = new ArrayList<Comment>();
-        Comment newComment = new Comment("test content");
-        Comment newComment2 = new Comment("test content2");
-        Comment newComment3 = new Comment("test content3");
-        list.add(newComment);
-        list.add(newComment2);
-        list.add(newComment3);
+    void getPostCommentsTest() {
+        Post post = new Post(0L, "title", "content");
+        List<Comment> list = new ArrayList<>();
+        Comment comment = new Comment("test content");
+        Comment comment2 = new Comment("test content2");
+        Comment comment3 = new Comment("test content3");
+        list.add(comment);
+        list.add(comment2);
+        list.add(comment3);
 
-        when(commentRepository.findAll()).thenReturn(list);
-        List<Comment> commentList = commentService.findAll();
+        when(commentRepository.findCommentsByPostOrderByCreatedAtAsc(any(Long.class))).thenReturn(list);
+        List<Comment> commentList = commentService.findAll(post.getPostId());
 
         assertEquals(3, commentList.size());
     }
 
     @Test
     void saveCommentTest() {
+        Post post = new Post(0L, "title", "content");
         Comment comment = new Comment("content");
 
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        Comment createdComment = commentService.save(comment);
+        Comment createdComment = commentService.save(comment, post.getPostId());
 
+        assertNotNull(createdComment.getPost());
         assertEquals(comment.getContent(), createdComment.getContent());
     }
 
     @Test
     void editCommentTest() {
+        Post post = new Post(0L, "title", "content");
         Comment comment = new Comment(0L, "content");
+        comment.setPost(post);
         Optional<Comment> optionalComment = Optional.of(comment);
 
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);

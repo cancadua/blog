@@ -15,11 +15,11 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
-    public Comment save(Comment comment) {
+    public Comment save(Comment comment, Long post_id) {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> findAll() {
+    public List<Comment> findAll(Long post_id) {
         return commentRepository.findAll();
     }
 
@@ -29,7 +29,7 @@ public class CommentService {
         );
 
         existingComment.setContent(comment.getContent());
-        return save(existingComment);
+        return save(existingComment, existingComment.getPost().getPostId());
     }
 
     public boolean delete(Long comment_id) {

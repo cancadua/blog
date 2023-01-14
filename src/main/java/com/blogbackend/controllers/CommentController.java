@@ -15,23 +15,23 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @GetMapping("/public/posts/comments")
-    public ResponseEntity<?> getPostComments() {
-        return new ResponseEntity<>(commentService.findAll(), HttpStatus.OK);
+    @GetMapping("/public/posts/{post_id}/comments")
+    public ResponseEntity<?> getPostComments(@PathVariable Long post_id) {
+        return new ResponseEntity<>(commentService.findAll(post_id), HttpStatus.OK);
     }
 
-    @PostMapping("/posts/comments")
-    public ResponseEntity<?> createNewComment(@RequestBody Comment comment) {
-        return new ResponseEntity<>(commentService.save(comment), HttpStatus.CREATED);
+    @PostMapping("/posts/{post_id}/comments")
+    public ResponseEntity<?> createNewComment(@PathVariable Long post_id, @RequestBody Comment comment) {
+        return new ResponseEntity<>(commentService.save(comment, post_id), HttpStatus.CREATED);
     }
 
-    @PutMapping("/posts/comments/{comment_id}")
-    public ResponseEntity<?> updateComment(@PathVariable Long comment_id, @RequestBody Comment comment) {
+    @PutMapping("/posts/{post_id}/comments/{comment_id}")
+    public ResponseEntity<?> updateComment(@PathVariable Long post_id, @PathVariable Long comment_id, @RequestBody Comment comment) {
         return new ResponseEntity<>(commentService.edit(comment, comment_id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/posts/comments/{comment_id}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long comment_id) {
+    @DeleteMapping("/posts/{post_id}/comments/{comment_id}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long post_id, @PathVariable Long comment_id) {
         return new ResponseEntity<>(commentService.delete(comment_id), HttpStatus.OK);
     }
 }
