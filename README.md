@@ -10,9 +10,7 @@ który w przypadku gdy jest zalogowany będzie posiadał możliwość dodawania,
 modyfikowania i usuwania postów oraz komentowania artykułów. Na
 niezalogowanych użytkowników zostaną nałożone ograniczenia zezwalające mu
 tylko przeglądać artykuły na blogu. Dodatkową rolą posiadaną przez użytkownika
-będzie admin, którego zadaniem jest odrzucanie lub zatwierdzanie artykułów na
-podstawie ich treści, bądź zawieszenie konta użytkownikowi w przypadku, gdy admin
-uzna to za niezbędne.
+będzie admin, który sprawuje pełną kontrolę nad wszystkimi artykułami oraz komentarzami.
 Finalny produkt będzie miał za cel przynieść rozrywkę, umożliwiać dzielenie się pasją
 oraz rozwój osobisty czytelników.
 
