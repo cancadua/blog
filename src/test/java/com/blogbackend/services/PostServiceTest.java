@@ -1,8 +1,8 @@
 package com.blogbackend.services;
 
 import com.blogbackend.models.Post;
-import com.blogbackend.models.Post;
-import com.blogbackend.repositories.PostRepository;
+import com.blogbackend.models.User;
+import com.blogbackend.models.UserDetailsImpl;
 import com.blogbackend.repositories.PostRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,6 +65,13 @@ public class PostServiceTest {
 
     @Test
     void savePostTest() {
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        SecurityContextHolder.setContext(securityContext);
+
         Post post = new Post("title","content");
 
         when(postRepository.save(any(Post.class))).thenReturn(post);
@@ -73,7 +82,15 @@ public class PostServiceTest {
 
     @Test
     void editPostTest() {
-        Post post = new Post(0L, "title", "content");
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(authentication.getName()).thenReturn(principal.getUsername());
+        SecurityContextHolder.setContext(securityContext);
+
+        Post post = new Post(0L, "title", "content", new User("user"));
         Optional<Post> optionalPost = Optional.of(post);
 
         when(postRepository.save(any(Post.class))).thenReturn(post);
@@ -85,9 +102,18 @@ public class PostServiceTest {
 
     @Test
     void deletePostTest() {
-        Post post = new Post(0L, "title", "content");
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(principal.getUsername());
+        SecurityContextHolder.setContext(securityContext);
 
-        when(postRepository.deletePostByPostId(any(Long.class))).thenReturn(true);
+        Post post = new Post(0L, "title", "content", new User("user"));
+        Optional<Post> optionalPost = Optional.of(post);
+
+        when(postRepository.deletePostByPostId(any(Long.class))).thenReturn(1);
+        when(postRepository.findById(any(Long.class))).thenReturn(optionalPost);
         boolean isDeleted = postService.delete(post.getPostId());
 
         assertTrue(isDeleted);

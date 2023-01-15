@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Transactional
-    boolean deleteCommentByCommentId(Long post_id);
+    Integer deleteCommentByCommentId(Long comment_id);
 
     List<Comment> findCommentsByPostOrderByCreatedAtAsc(Post post);
 }

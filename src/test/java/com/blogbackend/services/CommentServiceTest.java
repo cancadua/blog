@@ -2,20 +2,18 @@ package com.blogbackend.services;
 
 import com.blogbackend.models.Comment;
 import com.blogbackend.models.Post;
+import com.blogbackend.models.User;
+import com.blogbackend.models.UserDetailsImpl;
 import com.blogbackend.repositories.CommentRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +32,7 @@ public class CommentServiceTest {
 
     @Mock
     CommentRepository commentRepository;
+
 
     @AfterEach
     void tearDown(){
@@ -61,6 +60,13 @@ public class CommentServiceTest {
 
     @Test
     void saveCommentTest() {
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        SecurityContextHolder.setContext(securityContext);
+
         Post post = new Post(0L, "title", "content");
         Optional<Post> optionalPost = Optional.of(post);
         Comment comment = new Comment("content");
@@ -75,8 +81,16 @@ public class CommentServiceTest {
 
     @Test
     void editCommentTest() {
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(authentication.getName()).thenReturn(principal.getUsername());
+        SecurityContextHolder.setContext(securityContext);
+
         Post post = new Post(0L, "title", "content");
-        Comment comment = new Comment(0L, "content");
+        Comment comment = new Comment(0L, "content", new User("user"));
         comment.setPost(post);
         Optional<Comment> optionalComment = Optional.of(comment);
 
@@ -89,9 +103,18 @@ public class CommentServiceTest {
 
     @Test
     void deleteCommentTest() {
-        Comment comment = new Comment(0L, "content");
+        UserDetailsImpl principal = new UserDetailsImpl("user");
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(principal.getUsername());
+        SecurityContextHolder.setContext(securityContext);
 
-        when(commentRepository.deleteCommentByCommentId(any(Long.class))).thenReturn(true);
+        Comment comment = new Comment(0L, "content", new User("user"));
+        Optional<Comment> optionalComment = Optional.of(comment);
+
+        when(commentRepository.deleteCommentByCommentId(any(Long.class))).thenReturn(1);
+        when(commentRepository.findById(any(Long.class))).thenReturn(optionalComment);
         boolean isDeleted = commentService.delete(comment.getCommentId());
 
         assertTrue(isDeleted);

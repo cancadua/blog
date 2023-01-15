@@ -11,12 +11,10 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
 @Setter
-@AllArgsConstructor
+@Table(name = "comment")
 @NoArgsConstructor
-@ToString
 public class Comment {
     @Id
     @Column(name = "comment_id")
@@ -24,11 +22,11 @@ public class Comment {
     private Long commentId;
 
     @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_date", nullable = false, updatable = false)
-    @NotNull
     @CreatedDate
+    @Column(name = "created_date", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
@@ -37,9 +35,13 @@ public class Comment {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
-    @NotNull
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id", nullable = false)
     private Post post;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @NotNull
+    private User user;
 
     public Comment(String content) {
         this.content = content;
@@ -48,5 +50,11 @@ public class Comment {
     public Comment(Long comment_id, String content) {
         this.commentId = comment_id;
         this.content = content;
+    }
+
+    public Comment(Long comment_id, String content, User user) {
+        this.commentId = comment_id;
+        this.content = content;
+        this.user = user;
     }
 }
